@@ -1,0 +1,117 @@
+* API server for my blog comments system
+
+** Why?
+
+API server is used for creating a new issue for my blog comment.
+
+The POSΤ request can't sent to github from github pages because it
+doesn't suppport *CORS*. Thus, I create an api server as a springboard.
+
+In addition, you can find the implement of my static comments system [[https://yydai.github.io/others/static-comments-on-my-blog.html][here]].
+
+
+** Usage
+You can use this as your api server and it's domain is:
+#+BEGIN_SRC
+https://blog-api-server.herokuapp.com/
+#+END_SRC
+
+If you want to use this, you need to send a GET request to the url of:
+#+BEGIN_SRC
+https://blog-api-server.herokuapp.com/issues
+#+END_SRC
+
+You also need to provide the data of:
+#+BEGIN_SRC
+title labels body owner repo auth
+#+END_SRC
+
+for example:
+#+BEGIN_SRC
+https://blog-api-server.herokuapp.com/issues?title=test&labels=blog&body=Welcome to leave comments here.&owner=yydai&repo=yydai.github.io&auth=<base64(username:password)>
+#+END_SRC
+
+Note: The username and password is github account.
+
+Also, you can setup your own api server.
+
+
+** What to do?
+[[file:./imgs/20170629_182003_37318ybz.png]]
+
+** API
+
+
+The endpoint is:
+#+BEGIN_SRC
+https://{hostname}/blog/api/v1/
+#+END_SRC
+
+The API of our service:
+
+| HTTP Method | URL                                                | Action          |
+|-------------+----------------------------------------------------+-----------------|
+| GET         | {endpoint}/issues                                  |                 |
+| POST        | https://api.github.com/repos/{owner}/{repo}/issues | create an issue |
+
+GEΤ Parameters:
+| Name   | Type   | Description                                                              |
+|--------+--------+--------------------------------------------------------------------------|
+| title  | string | *Required*. The title of the blog.                                         |
+| labels | string | *Required*. Default is "blog".                                             |
+| body   | string | The contents of the issue. Default is "Welcome to leave comments here.". |
+| owner  | string | *Required.* The owner of the repo. Default is "yydai"                      |
+| repo   | string | *Required.* The repo name. Default is "yydai.github.io"                    |
+| auth   | string | *Required.* the base64(username:password)                                  |
+
+
+
+Example:
+#+BEGIN_SRC
+{endpoint}/issues?title=This is a test&labels=blog&body=Welcome to leave comments here.&owner=yydai&repo=yydai.github.io
+#+END_SRC
+
+POSΤ Parameters:
+| Name   | Type   | Description                                   |
+|--------+--------+-----------------------------------------------|
+| title  | string | *Required*. The title of the issue.             |
+| labels | string | *Required*. Label to associate with this issue. |
+| body   | string | The contents of the issue.                    |
+
+
+Example:
+#+BEGIN_SRC
+https://api.github.com/repos/yydai/yydai.github.io/issues
+
+{
+    "title": "This is a test",
+    "body": "Welcome to leave comments here.",
+    "labels": ["blog"]
+}
+#+END_SRC
+
+** Implement
+    I will use *Flask* to do this job. [[http://www.pythondoc.com/flask-restful/first.html][tutorials1]] and [[http://www.pythondoc.com/flask-mega-tutorial/index.html][tutorials2]].
+
+    In this phase, Our goal is just to implement the api above.
+
+    You can view the code in *app.py*.
+
+** Deployment
+    I will use the *Heroku* to deploy this api server.
+
+    If you want to use Heroku to deploy flask application, you need to include the following files:
+    - Procfile
+    - requirements.txt
+
+    Check the documentation of Python [[https://devcenter.heroku.com/articles/getting-started-with-python#introduction][here]] if necessary.
+
+    Using the following command to get the *requirements.txt*.
+    #+BEGIN_SRC shell
+    pip freeze > requirements.txt
+    #+END_SRC
+
+    In this project, my Procfile:
+    #+BEGIN_SRC
+    web gunicorn <app>:app
+    #+END_SRC
