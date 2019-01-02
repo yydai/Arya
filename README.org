@@ -1,6 +1,7 @@
 * API server for my blog comments system
 
 ** Why?
+I use github issues to manage my blog's comments and this is the background.
 
 API server is used for creating a new issue for my blog comment.
 
